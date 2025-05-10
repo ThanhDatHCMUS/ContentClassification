@@ -1,19 +1,22 @@
 from flask import Flask, request, jsonify
-from vit5_inference import load_model, predict
+from inference import load_model, predict
 
 app = Flask(__name__)
 
-model = load_model()
+model_1 = load_model(1)
+model_2 = load_model(2)
 
 @app.route('/api/predict', methods=['POST'])
 def api_predict():
     try:
         data = request.get_json()
         user_input = data.get('input')
+        model_type = data.get('model_type')
         if not user_input:
             return jsonify({'error': 'Missing input'}), 400
-
-        result = predict(model, user_input)
+        if model_type == 1:
+            result = predict(model_1, user_input, 1)
+        else: result = predict(model_2, user_input, 2)
 
         return jsonify({'result': result})
 
